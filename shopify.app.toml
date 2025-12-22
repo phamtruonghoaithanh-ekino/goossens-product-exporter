@@ -1,10 +1,8 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
-# This is your DEVELOPMENT app configuration
-# TODO: Replace with your development app's client_id from Shopify Partners dashboard
 
 client_id = "43cf7f8681dbe81a1af612979e4049b6"
 name = "Goossens Product Exporter"
-application_url = "https://localhost:3458"
+application_url = "https://example.com"
 embedded = true
 
 [build]
@@ -14,20 +12,9 @@ include_config_on_deploy = false
 [webhooks]
 api_version = "2026-01"
 
-  # [[webhooks.subscriptions]]
-  # topics = [ "app/uninstalled" ]
-  # uri = "/webhooks/app/uninstalled"
-
-  # [[webhooks.subscriptions]]
-  # topics = [ "app/scopes_update" ]
-  # uri = "/webhooks/app/scopes_update"
-
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
 scopes = "write_products"
 
 [auth]
-redirect_urls = [
-  "https://localhost:3458/api/auth",
-  "http://localhost:3458/api/auth"
-]
+redirect_urls = [ "https://example.com/api/auth" ]

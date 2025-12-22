@@ -32,15 +32,3 @@ model Session {
   refreshToken        String?
   refreshTokenExpires DateTime?
 }
-
-model ExportHistory {
-  id            String   @id @default(cuid())
-  shop          String
-  filename      String
-  originalFilename String
-  rowCount      Int
-  fileBuffer    Bytes
-  createdAt     DateTime @default(now())
-
-  @@index([shop, createdAt])
-}
