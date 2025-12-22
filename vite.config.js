@@ -2,6 +2,11 @@ import { reactRouter } from "@react-router/dev/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+// Set SHOPIFY_APP_URL from Vercel URL if not explicitly set
+if (process.env.VERCEL_URL && !process.env.SHOPIFY_APP_URL) {
+  process.env.SHOPIFY_APP_URL = `https://${process.env.VERCEL_URL}`;
+}
+
 // Related: https://github.com/remix-run/remix/issues/2835#issuecomment-1144102176
 // Replace the HOST env var with SHOPIFY_APP_URL so that it doesn't break the Vite server.
 // The CLI will eventually stop passing in HOST,

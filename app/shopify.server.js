@@ -4,8 +4,13 @@ import {
   AppDistribution,
   shopifyApp,
 } from "@shopify/shopify-app-react-router/server";
-import { PrismaSessionStorage } from "@shopify/shopify-app-session-storage-prisma";
-import prisma from "./db.server";
+import { RedisSessionStorage } from "@shopify/shopify-app-session-storage-redis";
+
+// Create Redis session storage with Upstash
+const redisSessionStorage = new RedisSessionStorage(
+  process.env.UPSTASH_REDIS_REST_URL,
+  process.env.UPSTASH_REDIS_REST_TOKEN,
+);
 
 const shopify = shopifyApp({
   apiKey: process.env.SHOPIFY_API_KEY,
@@ -14,7 +19,7 @@ const shopify = shopifyApp({
   scopes: process.env.SCOPES?.split(","),
   appUrl: process.env.SHOPIFY_APP_URL || "",
   authPathPrefix: "/auth",
-  sessionStorage: new PrismaSessionStorage(prisma),
+  sessionStorage: redisSessionStorage,
   distribution: AppDistribution.AppStore,
   future: {
     expiringOfflineAccessTokens: true,
