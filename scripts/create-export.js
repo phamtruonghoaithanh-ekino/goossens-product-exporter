@@ -2,6 +2,8 @@
 import fs from "fs";
 import * as XLSX from "xlsx";
 
+const prefix = "Google";
+
 function createExport({ file, filename }) {
   if (!file) {
     console.error("Please provide a file.");
@@ -86,8 +88,8 @@ function createExport({ file, filename }) {
     const indicesToRemove = new Set();
     headers.forEach((header, index) => {
       const headerStr = String(header);
-      // Remove columns that start with "Google Shopping"
-      if (headerStr.startsWith("Google")) {
+      // Remove columns that start with "Google"
+      if (headerStr.startsWith(prefix)) {
         indicesToRemove.add(index);
         console.log(`Removing column: "${header}" at index ${index}`);
       }
@@ -101,6 +103,12 @@ function createExport({ file, filename }) {
     console.log(`Removed ${indicesToRemove.size} columns`);
     console.log("New headers:", filteredRows[0]);
 
+    // Find the index of the Variant SKU column
+    const variantSKUIndex = filteredRows[0].findIndex(
+      (header) => String(header) === "Variant SKU",
+    );
+    console.log(`Variant SKU column index: ${variantSKUIndex}`);
+
     const handleMap = new Set();
     const uniqueRows = [filteredRows[0]]; // Keep header row
 
@@ -110,7 +118,20 @@ function createExport({ file, filename }) {
       const handle = row[0] ? row[0].toString().trim() : "";
 
       if (!handle || handle === "") {
-        continue; // Skip rows with empty handles
+        // continue; // Skip rows with empty handles
+        // If duplicate, only keep if Variant SKU has a value
+        const variantSKU =
+          variantSKUIndex >= 0 && row[variantSKUIndex]
+            ? row[variantSKUIndex].toString().trim()
+            : "";
+        if (variantSKU) {
+          console.log(
+            `Keeping duplicate handle "${handle}" because it has Variant SKU: "${variantSKU}"`,
+          );
+          uniqueRows.push(row);
+        } else {
+          continue; // Skip duplicate without Variant SKU
+        }
       }
       if (handleMap.has(handle)) {
         continue; // Skip duplicate handles
