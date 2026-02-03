@@ -5,9 +5,9 @@ import * as XLSX from "xlsx";
 // const prefix = "Google";
 const prefixes = [
   "Google",
-  "Option1",
-  "Option2",
-  "Option3",
+  "Option1 Linked To",
+  "Option2 Linked To",
+  "Option3 Linked To",
   "Image Src",
   "Image Position",
   "Variant Image",
