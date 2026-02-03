@@ -2,7 +2,18 @@
 import fs from "fs";
 import * as XLSX from "xlsx";
 
-const prefix = "Google";
+// const prefix = "Google";
+const prefixes = [
+  "Google",
+  "Option1",
+  "Option2",
+  "Option3",
+  "Image Src",
+  "Image Position",
+  "Variant Image",
+  "Image Alt Text",
+  "Unit Price",
+];
 
 function createExport({ file, filename }) {
   if (!file) {
@@ -88,8 +99,8 @@ function createExport({ file, filename }) {
     const indicesToRemove = new Set();
     headers.forEach((header, index) => {
       const headerStr = String(header);
-      // Remove columns that start with "Google"
-      if (headerStr.startsWith(prefix)) {
+      // Remove columns that start with any of the prefixes
+      if (prefixes.some((prefix) => headerStr.startsWith(prefix))) {
         indicesToRemove.add(index);
         console.log(`Removing column: "${header}" at index ${index}`);
       }
@@ -117,27 +128,16 @@ function createExport({ file, filename }) {
       const row = filteredRows[i];
       const handle = row[0] ? row[0].toString().trim() : "";
 
-      if (!handle || handle === "") {
-        // continue; // Skip rows with empty handles
-        // If duplicate, only keep if Variant SKU has a value
-        const variantSKU =
-          variantSKUIndex >= 0 && row[variantSKUIndex]
-            ? row[variantSKUIndex].toString().trim()
-            : "";
-        if (variantSKU) {
-          console.log(
-            `Keeping duplicate handle "${handle}" because it has Variant SKU: "${variantSKU}"`,
-          );
-          uniqueRows.push(row);
-        } else {
-          continue; // Skip duplicate without Variant SKU
-        }
+      const rowSKU = row[variantSKUIndex]
+        ? row[variantSKUIndex].toString().trim()
+        : "";
+
+      if (rowSKU) {
+        handleMap.add(handle);
+        uniqueRows.push(row);
+      } else {
+        continue; // Skip rows without Variant SKU
       }
-      if (handleMap.has(handle)) {
-        continue; // Skip duplicate handles
-      }
-      handleMap.add(handle);
-      uniqueRows.push(row);
     }
 
     console.log(
